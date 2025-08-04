@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tutorial – Coordinator Ranking System</title>
+  <link rel="icon" type="image/png" href="img/Logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { background-color: #f9f9fb; }
+    header {
+      background-color: #003df4e0;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .logo {
+      max-height: 50px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    h2 { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="img/white.png" alt="Logo" class="logo">
+    <span class="fs-4 fw-bold">Coordinator System Tutorial</span>
+  </header>
+
+  <div class="container my-4">
+    <p class="lead text-center">Understand how the ranking system works and how to improve your performance</p>
+
+    <h2>📅 What is a "Cycle"?</h2>
+    <p>A <strong>cycle</strong> is a 4-week (28-day) period where your activity is tracked. After each cycle, points reset and a new one begins.</p>
+    <p><strong>Example:</strong> Aug 1 – Aug 28, 2025</p>
+
+    <h2>🧮 What’s Measured?</h2>
+    <p>Your score is based on 3 main tasks per session:</p>
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Task</th>
+          <th>Done on Time</th>
+          <th>Delayed</th>
+          <th>Not Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Attendance</td>
+          <td>+1</td>
+          <td>+1, <span class="text-danger">-0.5 penalty</span></td>
+          <td><span class="text-danger">-1 penalty</span></td>
+        </tr>
+        <tr>
+          <td>Record</td>
+          <td>+1</td>
+          <td>+1, <span class="text-danger">-0.5 penalty</span></td>
+          <td><span class="text-danger">-1 penalty (only if online)</span></td>
+        </tr>
+        <tr>
+          <td>Materials</td>
+          <td>+1</td>
+          <td>+1, <span class="text-danger">-0.5 penalty</span></td>
+          <td><span class="text-danger">-1 penalty</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>🚨 Extra Penalties</h2>
+    <ul>
+      <li><strong>Reminder needed</strong> – <span class="text-danger">-3</span></li>
+      <li><strong>Problem reported</strong> – <span class="text-danger">-5</span></li>
+    </ul>
+
+    <h2>📊 Final Score Calculation</h2>
+    <ul>
+      <li>Total Points = Attendance + Record + Materials</li>
+      <li>Penalties are deducted</li>
+      <li>Performance % = (Total Points / Max Possible Points) × 100</li>
+    </ul>
+
+    <h2>🏅 Performance Levels</h2>
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Percentage</th>
+          <th>Performance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>95%+</td><td class="text-success fw-bold">Excellent</td></tr>
+        <tr><td>75–94%</td><td class="text-primary fw-bold">Good</td></tr>
+        <tr><td>60–74%</td><td class="text-warning fw-bold">Needs Improvement</td></tr>
+        <tr><td>&lt; 60%</td><td class="text-danger fw-bold">Weak</td></tr>
+      </tbody>
+    </table>
+
+    <h2>📈 Track Your Progress</h2>
+    <p>Visit the <a href="index.html">Dashboard</a> to see:</p>
+    <ul>
+      <li>Your current rank</li>
+      <li>Cycle date range</li>
+      <li>Breakdown of your scores</li>
+    </ul>
+
+    <h2>💡 Tips for a Better Score</h2>
+    <ul>
+      <li>Mark attendance during or right after the session</li>
+      <li>Upload recordings and materials on the same day</li>
+      <li>Communicate early if delayed</li>
+      <li>Avoid late reminders or mistakes</li>
+    </ul>
+  </div>
+</body>
+</html>
