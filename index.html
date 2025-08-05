@@ -76,69 +76,83 @@
     </div>
   </div>
   <script>
+    const isUnderMaintenance = true;
     const tbody = document.getElementById('rankingBody');
     const loadingDiv = document.getElementById('loading');
     const rankingTable = document.getElementById('rankingTable');
-    fetch('https://script.google.com/macros/s/AKfycbxc87L4wdaNESlWhfS-bDGgVnulru0a_sRjCveMFtNOW7I_M5WnaLm0s5kQNiePorNP/exec')
-  .then(res => res.json())
-  .then(response => {
-    const { data, cycleStart, cycleEnd } = response;
+    if (isUnderMaintenance) {
+      document.body.innerHTML = `
+        <div class="d-flex justify-content-center align-items-center vh-100 vw-100 text-center bg-light">
+          <div>
+            <img src="img/Logo.png" alt="Logo" style="max-width: 120px;" class="mb-3">
+            <h1 class="text-primary fw-bold">🚧 Site Under Maintenance</h1>
+            <p class="fs-5 text-muted">We're currently updating the dashboard.<br>Please check back soon.</p>
+          </div>
+        </div>`;
+    } else {
+      fetch('https://script.google.com/macros/s/AKfycbzPB4_NFAfOM3oAScTV9AWTh1wNko5Kr-qFuDGZ-Il3T40HtXruNJmEr8D2xJPRsXXk/exec')
+      .then(res => res.json())
+      .then(response => {
+        const { data, cycleStart, cycleEnd } = response;
 
-    // Display date range
-    document.getElementById('cycleRange').innerText = `Current Cycle: ${cycleStart} – ${cycleEnd}`;
+        // Display date range
+        document.getElementById('cycleRange').innerText = `Current Cycle: ${cycleStart} – ${cycleEnd}`;
 
-    // Sort and display table
-    data.sort((a, b) => {
-      if (b.percentage !== a.percentage) {
-        return b.percentage - a.percentage; // Primary sort by percentage
-      }
-      return b.totalSessions - a.totalSessions; // Secondary sort by total sessions
-    });
-    let rows = "";
+        // Sort and display table
+        data.sort((a, b) => {
+          if (b.percentage !== a.percentage) {
+            return b.percentage - a.percentage; // Primary sort by percentage
+          }
+          return b.totalSessions - a.totalSessions; // Secondary sort by total sessions
+        });
+        let rows = "";
 
-    data.forEach((c, i) => {
-      let rankDisplay;
-      let rowClass = "";
-      if (i === 0) {
-        rankDisplay = "🥇";
-        rowClass = "gold-row";
-      } else if (i === 1) {
-        rankDisplay = "🥈";
-        rowClass = "silver-row";
-      } else if (i === 2) {
-        rankDisplay = "🥉";
-        rowClass = "bronze-row";
-      } else {
-        rankDisplay = i + 1;
-        rowClass = ""; 
-      }
+        data.forEach((c, i) => {
+          let rankDisplay;
+          let rowClass = "";
+          if (i === 0) {
+            rankDisplay = "🥇";
+            rowClass = "gold-row";
+          } else if (i === 1) {
+            rankDisplay = "🥈";
+            rowClass = "silver-row";
+          } else if (i === 2) {
+            rankDisplay = "🥉";
+            rowClass = "bronze-row";
+          } else {
+            rankDisplay = i + 1;
+            rowClass = ""; 
+          }
 
-      rows += `
-        <tr class="${rowClass}">
-          <td>${rankDisplay}</td>
-          <td>${c.name}</td>
-          <td>${c.totalSessions}</td>
-          <td>${c.attendanceScore}</td>
-          <td>${c.recordsScore}</td>
-          <td>${c.materialsScore}</td>
-          <td class="text-danger">-${c.penalties.toFixed(1)}</td>
-          <td>${c.totalPoints.toFixed(1)}</td>
-          <td>${c.percentage}%</td>
-          <td>${c.performance}</td>
-        </tr>`;
-    });
+          rows += `
+            <tr class="${rowClass}">
+              <td>${rankDisplay}</td>
+              <td>${c.name}</td>
+              <td>${c.totalSessions}</td>
+              <td>${c.attendanceScore}</td>
+              <td>${c.recordsScore}</td>
+              <td>${c.materialsScore}</td>
+              <td class="text-danger">-${c.penalties.toFixed(1)}</td>
+              <td>${c.totalPoints.toFixed(1)}</td>
+              <td>${c.percentage}%</td>
+              <td>${c.performance}</td>
+            </tr>`;
+        });
 
-    tbody.innerHTML = rows;
+        tbody.innerHTML = rows;
 
-  })
-  .catch(error => {
-    tbody.innerHTML = `<tr><td colspan="10" class="text-danger text-center">Error loading data</td></tr>`;
-    console.error("Fetch error:", error);
-  })
-  .finally(() => {
-    loadingDiv.style.display = 'none';
-    rankingTable.style.display = 'block';
-  });
+      })
+      .catch(error => {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-danger text-center">Error loading data</td></tr>`;
+        console.error("Fetch error:", error);
+      })
+      .finally(() => {
+        loadingDiv.style.display = 'none';
+        rankingTable.style.display = 'block';
+      });
+
+    }
+    
 
   </script>
 </body>
