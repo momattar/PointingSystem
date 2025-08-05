@@ -19,6 +19,23 @@
       vertical-align: middle;
       margin-right: 10px;
     }
+    .gold-row > td {
+      background-color: #ffd700 !important;
+      color: black !important;
+      font-weight: bold;
+    }
+
+    .silver-row > td {
+      background-color: #c0c0c0 !important;
+      color: black !important;
+      font-weight: bold;
+    }
+
+    .bronze-row > td {
+      background-color: #cd7f32 !important;
+      color: white !important;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -39,7 +56,7 @@
     <p class="text-center text-muted mb-3" id="cycleRange"></p>
 
     <div class="table-responsive" style="display: none;" id="rankingTable">
-      <table class="table table-bordered table-striped">
+      <table class="table table-bordered">
         <thead class="table-primary">
           <tr>
             <th>Rank</th>
@@ -62,7 +79,7 @@
     const tbody = document.getElementById('rankingBody');
     const loadingDiv = document.getElementById('loading');
     const rankingTable = document.getElementById('rankingTable');
-    fetch('https://script.google.com/macros/s/AKfycbyGJ8__ae6dkf2oHxFRtxp1iNjG8ro4Dc9LwNISMXhVAikdw6bj--8Ynjit-uy3u048/exec')
+    fetch('https://script.google.com/macros/s/AKfycbwRdi9u6QwU68ams6WWeyWCnR6YShikeaOSP0StNyb6WsoXFALvOMp5fLuNRzUfxvqj/exec')
   .then(res => res.json())
   .then(response => {
     const { data, cycleStart, cycleEnd } = response;
@@ -73,10 +90,27 @@
     // Sort and display table
     data.sort((a, b) => b.percentage - a.percentage);
     let rows = "";
+
     data.forEach((c, i) => {
+      let rankDisplay;
+      let rowClass = "";
+      if (i === 0) {
+        rankDisplay = "🥇";
+        rowClass = "gold-row";
+      } else if (i === 1) {
+        rankDisplay = "🥈";
+        rowClass = "silver-row";
+      } else if (i === 2) {
+        rankDisplay = "🥉";
+        rowClass = "bronze-row";
+      } else {
+        rankDisplay = i + 1;
+        rowClass = ""; // <- this line was missing!
+      }
+
       rows += `
-        <tr>
-          <td>${i + 1}</td>
+        <tr class="${rowClass}">
+          <td>${rankDisplay}</td>
           <td>${c.name}</td>
           <td>${c.totalSessions}</td>
           <td>${c.attendanceScore}</td>
@@ -88,7 +122,9 @@
           <td>${c.performance}</td>
         </tr>`;
     });
+
     tbody.innerHTML = rows;
+
   })
   .catch(error => {
     tbody.innerHTML = `<tr><td colspan="10" class="text-danger text-center">Error loading data</td></tr>`;
