@@ -88,7 +88,12 @@
     document.getElementById('cycleRange').innerText = `Current Cycle: ${cycleStart} – ${cycleEnd}`;
 
     // Sort and display table
-    data.sort((a, b) => b.percentage - a.percentage);
+    data.sort((a, b) => {
+      if (b.percentage !== a.percentage) {
+        return b.percentage - a.percentage; // Primary sort by percentage
+      }
+      return b.totalSessions - a.totalSessions; // Secondary sort by total sessions
+    });
     let rows = "";
 
     data.forEach((c, i) => {
@@ -105,7 +110,7 @@
         rowClass = "bronze-row";
       } else {
         rankDisplay = i + 1;
-        rowClass = ""; // <- this line was missing!
+        rowClass = ""; 
       }
 
       rows += `
