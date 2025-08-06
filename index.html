@@ -76,7 +76,7 @@
     </div>
   </div>
   <script>
-    const isUnderMaintenance = true;
+    const isUnderMaintenance = false;
     const tbody = document.getElementById('rankingBody');
     const loadingDiv = document.getElementById('loading');
     const rankingTable = document.getElementById('rankingTable');
@@ -89,8 +89,9 @@
             <p class="fs-5 text-muted">We're currently updating the dashboard.<br>Please check back soon.</p>
           </div>
         </div>`;
+        
     } else {
-      fetch('https://script.google.com/macros/s/AKfycbzPB4_NFAfOM3oAScTV9AWTh1wNko5Kr-qFuDGZ-Il3T40HtXruNJmEr8D2xJPRsXXk/exec')
+      fetch('https://script.google.com/macros/s/AKfycbwuA3hftLXA5075wYvqPyTP2o3kP7nXpemwasgr0CasxmRXdJGLSkyEp4O2PVLNltxb/exec')
       .then(res => res.json())
       .then(response => {
         const { data, cycleStart, cycleEnd } = response;
