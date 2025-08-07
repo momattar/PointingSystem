@@ -7,6 +7,9 @@
   <link rel="icon" type="image/png" href="img/Logo.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
     body { background-color: #f9f9fb; }
     header {
       background-color: #003df4e0;
@@ -19,23 +22,170 @@
       vertical-align: middle;
       margin-right: 10px;
     }
-    h2 { margin-top: 2rem; }
+    h2 { margin-top: 4rem; }
+
+    .btn-dashboard {
+      background-color: white;
+      color: #003df4e0;
+      border: 2px solid #003df4e0;
+      font-weight: 500;
+      padding: 6px 12px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-dashboard:hover {
+      background-color: #003df4e0;
+      color: white;
+    }
+    .toc-container {
+      background-color: #eef2ff;
+      border-left: 5px solid #003df4e0;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .toc-title {
+      font-weight: 600;
+      color: #003df4e0;
+      margin-bottom: 0.75rem;
+    }
+
+    .toc-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+    }
+
+    .toc-link {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: white;
+      color: #003df4e0;
+      border: 1px solid #003df4e0;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .toc-link:hover {
+      background-color: #003df4e0;
+      color: white;
+    }
+
+    @media (max-width: 576px) {
+      .toc-link {
+        flex: 1 1 100%;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <img src="img/white.png" alt="Logo" class="logo">
-    <span class="fs-4 fw-bold">Coordinator System Tutorial</span>
+  <header class="d-flex justify-content-between align-items-center">
+    <div>
+      <img src="img/white.png" alt="Logo" class="logo">
+      <span class="fs-4 fw-bold">Coordinator System Tutorial</span>
+    </div>
+    <a href="index.html" class="btn btn-dashboard me-2">← Back to Dashboard</a>
+    <style>
+      #goUpBtn {
+        position: fixed;
+        bottom: 40px;
+        right: 30px;
+        z-index: 100;
+        background-color: #003df4e0;
+        color: white;
+        border: none;
+        outline: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 22px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        display: none;
+        transition: all 0.3s ease;
+      }
+
+      #goUpBtn:hover {
+        background-color: #0028a0;
+        transform: translateY(-3px);
+      }
+      h2.highlighted {
+        background-color: #ffeaa7;
+        border-left: 5px solid #0984e3;
+        padding-left: 10px;
+        transition: background-color 0.3s ease;
+      }
+    </style>
   </header>
+  
 
   <div class="container my-4">
     <p class="lead text-center">Understand how the ranking system works and how to improve your performance</p>
+    <div class="toc-container">
+      <div class="toc-title">📘 Quick Navigation</div>
+      <div class="toc-links">
+        <a href="#cycle" class="toc-link">📅 What is a Cycle?</a>
+        <a href="#measured" class="toc-link">🧮 What’s Measured?</a>
+        <a href="#penalties" class="toc-link">🚨 Extra Penalties</a>
+        <a href="#calculation" class="toc-link">📊 Score Calculation</a>
+        <a href="#performance" class="toc-link">🏅 Performance Levels</a>
+        <a href="#dashboard" class="toc-link">📈 Track Progress</a>
+        <a href="#tips" class="toc-link">💡 Tips for Better Score</a>
+      </div>
+    </div>
+    <!-- Branding / Featured Section -->
+    <div class="my-4 text-center">
+      <img src="img/horizontal.png" alt="eYouth Logo" class="img-fluid" style="max-height: 80px;">
+    </div>
 
-    <h2>📅 What is a "Cycle"?</h2>
+    <!-- Session Toolkit -->
+    <div class="card shadow-sm border-0 mb-5">
+      <div class="card-body">
+        <h5 class="card-title text-primary fw-bold mb-3">🛠️ Session Links Toolkit</h5>
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+          <div class="col">
+            <a href="https://depi3.eyouthlearning.com/" target="_blank" class="btn btn-outline-primary w-100">
+              🔐 LMS
+            </a>
+          </div>
+          <div class="col">
+            <a href="https://drive.google.com/drive/folders/1SYh5_LtBwQvRN8-wNNiAPvn0IVyo89tA" target="_blank" class="btn btn-outline-primary w-100">
+              📁 NonTechnical Material Drive
+            </a>
+          </div>
+          <div class="col">
+            <a href="https://tracking.depi.eyouthlearning.com" target="_blank" class="btn btn-outline-primary w-100">
+              📝 Tracking System
+            </a>
+          </div>
+          <div class="col">
+            <a href="https://docs.google.com/spreadsheets/d/1WS09TYzvnNFu5hu2dFSZ65acAegUeGGF_-c_AgRydHI/edit?gid=0#gid=0" target="_blank" class="btn btn-outline-primary w-100">
+              📊 Group Database
+            </a>
+          </div>
+          <div class="col">
+            <a href="https://docs.google.com/spreadsheets/d/1VABzkHwvRdFv5lzo5HKCT3tLVkT_-n-7O0AnqOqzIc0/edit?gid=1128549826#gid=1128549826" target="_blank" class="btn btn-outline-primary w-100">
+              ⏺ Session Recordings
+            </a>
+          </div>
+          <div class="col">
+            <a href="https://www.zoom.us/" target="_blank" class="btn btn-outline-primary w-100">
+              🌐 Zoom
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="cycle">📅 What is a "Cycle"?</h2>
     <p>A <strong>cycle</strong> is a 4-week (28-day) period where your activity is tracked. After each cycle, points reset and a new one begins.</p>
     <p><strong>Example:</strong> Aug 1 – Aug 28, 2025</p>
 
-    <h2>🧮 What’s Measured?</h2>
+    <h2 id="measured">🧮 What’s Measured?</h2>
     <p>Your score is based on 3 main tasks per session:</p>
     <table class="table table-bordered">
       <thead class="table-light">
@@ -68,20 +218,20 @@
       </tbody>
     </table>
 
-    <h2>🚨 Extra Penalties</h2>
+    <h2 id="penalties">🚨 Extra Penalties</h2>
     <ul>
       <li><strong>Reminder not sent 24hr before session</strong> – <span class="text-danger">-3</span></li>
       <li><strong>Caused problem, or didn't report problem</strong> – <span class="text-danger">-5</span></li>
     </ul>
 
-    <h2>📊 Final Score Calculation</h2>
+    <h2 id="calculation">📊 Final Score Calculation</h2>
     <ul>
       <li>Total Points = Attendance + Record + Materials</li>
       <li>Penalties are deducted</li>
       <li>Performance % = (Total Points / Max Possible Points) × 100</li>
     </ul>
 
-    <h2>🏅 Performance Levels</h2>
+    <h2 id="performance">🏅 Performance Levels</h2>
     <table class="table table-bordered">
       <thead class="table-light">
         <tr>
@@ -97,7 +247,7 @@
       </tbody>
     </table>
 
-    <h2>📈 Track Your Progress</h2>
+    <h2 id="dashboard">📈 Track Your Progress</h2>
     <p>Visit the <a href="index.html">Dashboard</a> to see:</p>
     <ul>
       <li>Your current rank</li>
@@ -105,7 +255,7 @@
       <li>Breakdown of your scores</li>
     </ul>
 
-    <h2>💡 Tips for a Better Score</h2>
+    <h2 id="tips">💡 Tips for a Better Score</h2>
     <ul>
       <li>Mark attendance during or right after the session</li>
       <li>Upload recordings and materials on the same day</li>
@@ -113,5 +263,45 @@
       <li>Avoid late reminders or mistakes</li>
     </ul>
   </div>
+  <button id="goUpBtn" onclick="scrollToTop()" title="Go to top">
+    ↑
+  </button>
+  <script>
+    // Show button when user scrolls down
+      window.onscroll = function () {
+        const btn = document.getElementById("goUpBtn");
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+          btn.style.display = "block";
+        } else {
+          btn.style.display = "none";
+        }
+      };
+
+      // Smooth scroll to top
+      function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      document.querySelectorAll('.toc-container a[href^="#"]').forEach(link => {
+      link.addEventListener('click', function (e) {
+        const targetId = this.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
+
+        if (target) {
+          // Remove highlight from all others
+          document.querySelectorAll('h2.highlighted').forEach(el => {
+            el.classList.remove('highlighted');
+          });
+
+          // Add highlight to the target
+          target.classList.add('highlighted');
+
+          // Optional: Remove it after 3 seconds
+          setTimeout(() => {
+            target.classList.remove('highlighted');
+          }, 3000);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
