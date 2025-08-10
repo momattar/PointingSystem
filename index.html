@@ -131,7 +131,7 @@
   </button>
 
   <script>
-    const isUnderMaintenance = false;
+    const isUnderMaintenance = true;
     const tbody = document.getElementById('rankingBody');
     const loadingDiv = document.getElementById('loading');
     const rankingTable = document.getElementById('rankingTable');
@@ -146,7 +146,7 @@
         </div>`;
         
     } else {
-      fetch('https://script.google.com/macros/s/AKfycbwuA3hftLXA5075wYvqPyTP2o3kP7nXpemwasgr0CasxmRXdJGLSkyEp4O2PVLNltxb/exec')
+      fetch('https://script.google.com/macros/s/AKfycbx-JeZtsp0eXmndE-r_fcD3WiWHqVwgWPqdDFpFvNMKyqePqvCb4iE0ZAfTjcttFUS4/exec')
       .then(res => res.json())
       .then(response => {
         const { data, cycleStart, cycleEnd } = response;
