@@ -96,13 +96,24 @@
     <p class="text-center text-muted mb-3" id="cycleRange"></p>
     <!-- Hidden by default -->
     <div class="mb-3 text-end" id="searchContainer" style="display: none;">
-      <input
-        type="text"
-        id="searchInput"
-        class="form-control w-25 d-inline"
-        placeholder="Search by name..."
-      />
+      <div class="position-relative d-inline-block w-25">
+        <input
+          type="text"
+          id="searchInput"
+          class="form-control pe-5"
+          placeholder="Search by name..."
+        />
+        <button
+          type="button"
+          id="clearSearch"
+          class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1"
+          style="border: none; background: transparent; font-size: 18px; display: none;"
+        >
+          ×
+        </button>
+      </div>
     </div>
+
 
 
     <div class="table-responsive" style="display: none;" id="rankingTable">
@@ -131,6 +142,19 @@
   </button>
 
   <script>
+    const searchInput = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("clearSearch");
+
+    searchInput.addEventListener("input", function () {
+      clearBtn.style.display = this.value ? "block" : "none";
+    });
+
+    clearBtn.addEventListener("click", function () {
+      searchInput.value = "";
+      clearBtn.style.display = "none";
+      filterTable(); // reset table when cleared
+    });
+
     const isUnderMaintenance = false;
     const tbody = document.getElementById('rankingBody');
     const loadingDiv = document.getElementById('loading');
