@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,299 +6,895 @@
   <title>Coordinator Dashboard</title>
   <link rel="icon" type="image/png" href="img/Logo.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <style>
-    body { background-color: #f4f6f8; }
+    :root {
+      --primary-color: #003df4e0;
+      --primary-hover: #0028a0;
+      --gold: #ffd700;
+      --silver: #c0c0c0;
+      --bronze: #cd7f32;
+    }
+    
+    body { 
+      background-color: #f8f9fa; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
     header {
-      background-color: #003df4e0;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
       color: white;
       padding: 1rem;
-      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+    
     .logo {
       max-height: 50px;
       vertical-align: middle;
       margin-right: 10px;
     }
+    
+    .stats-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid var(--primary-color);
+      transition: transform 0.2s ease;
+    }
+    
+    .stats-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .stats-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .filter-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+    
     .gold-row > td {
-      background-color: #ffd700 !important;
-      color: black !important;
+      background: linear-gradient(135deg, var(--gold), #ffed4e) !important;
+      color: #8b6914 !important;
       font-weight: bold;
     }
 
     .silver-row > td {
-      background-color: #c0c0c0 !important;
-      color: black !important;
+      background: linear-gradient(135deg, var(--silver), #d4d4d4) !important;
+      color: #4a4a4a !important;
       font-weight: bold;
     }
 
     .bronze-row > td {
-      background-color: #cd7f32 !important;
+      background: linear-gradient(135deg, var(--bronze), #e69c56) !important;
       color: white !important;
       font-weight: bold;
     }
+    
     .highlight {
-      background-color: yellow;
+      background-color: #fff3cd;
       font-weight: bold;
+      padding: 2px 4px;
+      border-radius: 3px;
     }
-    #goUpBtn {
-      position: fixed;
-      bottom: 40px;
-      right: 30px;
-      z-index: 100;
-      background-color: #003df4e0;
+    
+    .performance-badge {
+      padding: 4px 8px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .performance-outstanding { background-color: #d4edda; color: #155724; }
+    .performance-excellent { background-color: #cce5ff; color: #004085; }
+    .performance-good { background-color: #fff3cd; color: #856404; }
+    .performance-needs-improvement { background-color: #f8d7da; color: #721c24; }
+    .performance-weak { background-color: #f5c6cb; color: #721c24; }
+    
+    .table-container {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .table th {
+      background-color: var(--primary-color);
       color: white;
       border: none;
-      outline: none;
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      font-size: 22px;
+      padding: 1rem 0.75rem;
+      font-weight: 500;
+    }
+    
+    .table td {
+      padding: 0.75rem;
+      vertical-align: middle;
+      border-color: #e9ecef;
+    }
+    
+    .expandable-row {
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      transition: background-color 0.2s ease;
+    }
+    
+    .expandable-row:hover {
+      background-color: #f8f9fa !important;
+    }
+    
+    .details-row {
+      background-color: #f8f9fa;
+      border-left: 3px solid var(--primary-color);
+    }
+    
+    .btn-dashboard {
+      background-color: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-dashboard:hover {
+      background-color: white;
+      color: var(--primary-color);
+      transform: translateY(-1px);
+    }
+    
+    .filter-btn {
+      margin: 0.25rem;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-btn.active {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+    
+    #goUpBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 25px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,61,244,0.3);
       display: none;
       transition: all 0.3s ease;
     }
 
     #goUpBtn:hover {
-      background-color: #0028a0;
-      transform: translateY(-3px);
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 6px 20px rgba(0,61,244,0.4);
     }
-    .btn-dashboard {
-      background-color: white;
-      color: #003df4e0;
-      border: 2px solid #003df4e0;
-      font-weight: 500;
-      padding: 6px 12px;
-      transition: all 0.2s ease-in-out;
+    
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
     }
-
-    .btn-dashboard:hover {
-      background-color: #003df4e0;
-      color: white;
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .last-updated {
+      font-size: 0.9rem;
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    @media (max-width: 768px) {
+      .stats-card {
+        margin-bottom: 1rem;
+      }
+      
+      .table-responsive {
+        font-size: 0.9rem;
+      }
+      
+      .btn-dashboard {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+      }
+      
+      .filter-card {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="d-flex justify-content-between align-items-center">
-  <div>
-    <img src="img/white.png" alt="Logo" class="logo">
-    <span class="fs-4 fw-bold">Coordinator Dashboard</span>
-  </div>
-  <a href="tutorial.html" class="btn btn-dashboard me-2">Tutorial</a>
-</header>
-
-
-  <div class="container mt-4">
-    <div id="loading" class="text-center my-5">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2">Loading data, please wait...</p>
+  <header class="d-flex justify-content-between align-items-center flex-wrap">
+    <div class="d-flex align-items-center">
+      <img src="img/white.png" alt="Logo" class="logo">
+      <span class="fs-4 fw-bold">Coordinator Dashboard</span>
     </div>
-    <p class="text-center text-muted mb-3" id="cycleRange"></p>
-    <!-- Hidden by default -->
-    <div class="mb-3 text-end" id="searchContainer" style="display: none;">
-      <div class="position-relative d-inline-block w-25">
-        <input
-          type="text"
-          id="searchInput"
-          class="form-control pe-5"
-          placeholder="Search by name..."
-        />
-        <button
-          type="button"
-          id="clearSearch"
-          class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1"
-          style="border: none; background: transparent; font-size: 18px; display: none;"
-        >
-          ×
-        </button>
+    <div class="d-flex gap-2 flex-wrap mt-2 mt-md-0">
+      <button id="exportBtn" class="btn btn-dashboard">
+        📊 Export
+      </button>
+      <button id="refreshBtn" class="btn btn-dashboard">
+        🔄 Refresh
+      </button>
+      <a href="tutorial.html" class="btn btn-dashboard">
+        📖 Tutorial
+      </a>
+    </div>
+  </header>
+
+  <div class="container-fluid mt-4">
+    <!-- Loading State -->
+    <div id="loading" class="text-center my-5">
+      <div class="loading-spinner"></div>
+      <p class="mt-3">Loading dashboard data...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" style="display: none;">
+      <!-- Stats Overview -->
+      <div class="row mb-4" id="statsRow">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number" id="totalCoordinators">0</div>
+            <div class="text-muted">Total Coordinators</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number" id="avgPerformance">0%</div>
+            <div class="text-muted">Average Performance</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number" id="totalSessions">0</div>
+            <div class="text-muted">Total Sessions</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number" id="topPerformers">0</div>
+            <div class="text-muted">Outstanding (95%+)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+          <div class="chart-container">
+            <h6 class="text-center mb-3">Performance Distribution</h6>
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="chart-container">
+            <h6 class="text-center mb-3">Score Breakdown</h6>
+            <canvas id="scoresChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cycle Info -->
+      <div class="text-center mb-3">
+        <p class="text-muted mb-1" id="cycleRange"></p>
+        <p class="last-updated" id="lastUpdated"></p>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-card">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Search Coordinator:</label>
+            <div class="position-relative">
+              <input type="text" id="searchInput" class="form-control" placeholder="Search by name...">
+              <button type="button" id="clearSearch" class="btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2" style="display: none; border: none; background: transparent;">×</button>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Performance Level:</label>
+            <select id="performanceFilter" class="form-select">
+              <option value="">All Levels</option>
+              <option value="Outstanding">Outstanding (95%+)</option>
+              <option value="Excellent">Excellent (90-94%)</option>
+              <option value="Good">Good (75-89%)</option>
+              <option value="Needs Improvement">Needs Improvement (60-74%)</option>
+              <option value="Weak">Weak (<60%)</option>
+            </select>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Percentage Range:</label>
+            <div class="d-flex align-items-center gap-2">
+              <input type="range" id="percentageRange" class="form-range" min="0" max="100" value="0">
+              <span id="rangeValue" class="text-muted">0%+</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <label class="form-label fw-bold">Quick Filters:</label>
+            <div>
+              <button class="btn btn-outline-secondary btn-sm filter-btn" data-filter="all">All</button>
+              <button class="btn btn-outline-warning btn-sm filter-btn" data-filter="top3">Top 3</button>
+              <button class="btn btn-outline-success btn-sm filter-btn" data-filter="high-sessions">High Activity (10+ Sessions)</button>
+              <button class="btn btn-outline-danger btn-sm filter-btn" data-filter="needs-attention">Needs Attention (<75%)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rankings Table -->
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th style="cursor: pointer;" data-sort="rank">Rank <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="name">Name <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="totalSessions">Sessions <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="attendanceScore">Attendance <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="recordsScore">Records <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="materialsScore">Materials <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="penalties">Penalties <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="totalPoints">Points <small>▼</small></th>
+                <th style="cursor: pointer;" data-sort="percentage">Percentage <small>▼</small></th>
+                <th>Performance</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="rankingBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
+  </div>
 
-
-
-    <div class="table-responsive" style="display: none;" id="rankingTable">
-      <table class="table table-bordered">
-        <thead class="table-primary">
-          <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Total Sessions</th>
-            <th>Attendance Score</th>
-            <th>Record Score</th>
-            <th>Material Score</th>
-            <th>Penalties</th>
-            <th>Total Points</th>
-            <th>Percentage</th>
-            <th>Performance</th>
-          </tr>
-        </thead>
-        <tbody id="rankingBody"></tbody>
-      </table>
+  <!-- Export Modal -->
+  <div class="modal fade" id="exportModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Export Dashboard</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Choose export format:</p>
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary" onclick="exportData('csv')">📊 Export as CSV</button>
+            <button class="btn btn-success" onclick="exportData('json')">📁 Export as JSON</button>
+            <button class="btn btn-info" onclick="window.print()">🖨️ Print Report</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <button id="goUpBtn" onclick="scrollToTop()" title="Go to top">
-    ↑
-  </button>
+  <button id="goUpBtn" onclick="scrollToTop()" title="Go to top">↑</button>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const searchInput = document.getElementById("searchInput");
-    const clearBtn = document.getElementById("clearSearch");
+    // Global variables
+    let allData = [];
+    let filteredData = [];
+    let currentSort = { field: 'percentage', ascending: false };
+    
+    // DOM elements
+    const elements = {
+      loading: document.getElementById('loading'),
+      mainContent: document.getElementById('mainContent'),
+      searchInput: document.getElementById('searchInput'),
+      clearSearch: document.getElementById('clearSearch'),
+      performanceFilter: document.getElementById('performanceFilter'),
+      percentageRange: document.getElementById('percentageRange'),
+      rangeValue: document.getElementById('rangeValue'),
+      rankingBody: document.getElementById('rankingBody'),
+      refreshBtn: document.getElementById('refreshBtn'),
+      exportBtn: document.getElementById('exportBtn')
+    };
 
-    searchInput.addEventListener("input", function () {
-      clearBtn.style.display = this.value ? "block" : "none";
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      loadData();
+      setupEventListeners();
     });
 
-    clearBtn.addEventListener("click", function () {
-      searchInput.value = "";
-      clearBtn.style.display = "none";
-      filterTable(); // reset table when cleared
-    });
-
-    const isUnderMaintenance = false;
-    const tbody = document.getElementById('rankingBody');
-    const loadingDiv = document.getElementById('loading');
-    const rankingTable = document.getElementById('rankingTable');
-    if (isUnderMaintenance) {
-      document.body.innerHTML = `
-        <div class="d-flex justify-content-center align-items-center vh-100 vw-100 text-center bg-light">
-          <div>
-            <img src="img/Logo.png" alt="Logo" style="max-width: 120px;" class="mb-3">
-            <h1 class="text-primary fw-bold">🚧 Site Under Maintenance</h1>
-            <p class="fs-5 text-muted">We're currently updating the dashboard.<br>Please check back soon.</p>
-          </div>
-        </div>`;
-        
-    } else {
-      fetch('https://script.google.com/macros/s/AKfycbyCw9LiQIEjPtDucQdwxMFgVAo4AevQfEnyOGJad2uaiCwyMqh_-wQl0xtRsuHBHTF7/exec')
-      .then(res => res.json())
-      .then(response => {
-        const { data, cycleStart, cycleEnd } = response;
-
-        // Display date range
-        document.getElementById('cycleRange').innerText = `Current Cycle: ${cycleStart} – ${cycleEnd}`;
-
-        // Sort and display table
-        data.sort((a, b) => {
-          if (b.percentage !== a.percentage) {
-            return b.percentage - a.percentage; // Primary sort by percentage
-          }
-          return b.totalSessions - a.totalSessions; // Secondary sort by total sessions
+    function setupEventListeners() {
+      // Search functionality
+      elements.searchInput.addEventListener('input', debounce(applyFilters, 300));
+      elements.clearSearch.addEventListener('click', clearSearch);
+      
+      // Filter functionality
+      elements.performanceFilter.addEventListener('change', applyFilters);
+      elements.percentageRange.addEventListener('input', updateRangeValue);
+      elements.percentageRange.addEventListener('change', applyFilters);
+      
+      // Quick filters
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          applyQuickFilter(this.dataset.filter);
         });
-        let rows = "";
-
-        data.forEach((c, i) => {
-          let rankDisplay;
-          let rowClass = "";
-          if (i === 0) {
-            rankDisplay = "🥇";
-            rowClass = "gold-row";
-          } else if (i === 1) {
-            rankDisplay = "🥈";
-            rowClass = "silver-row";
-          } else if (i === 2) {
-            rankDisplay = "🥉";
-            rowClass = "bronze-row";
-          } else {
-            rankDisplay = i + 1;
-            rowClass = ""; 
-          }
-
-          rows += `
-            <tr class="${rowClass}">
-              <td>${rankDisplay}</td>
-              <td>${c.name}</td>
-              <td>${c.totalSessions}</td>
-              <td>${c.attendanceScore}</td>
-              <td>${c.recordsScore}</td>
-              <td>${c.materialsScore}</td>
-              <td class="text-danger">-${c.penalties.toFixed(1)}</td>
-              <td>${c.totalPoints.toFixed(1)}</td>
-              <td>${c.percentage}%</td>
-              <td>${c.performance}</td>
-            </tr>`;
-        });
-
-        tbody.innerHTML = rows;
-
-      })
-      .catch(error => {
-        tbody.innerHTML = `<tr><td colspan="10" class="text-danger text-center">Error loading data</td></tr>`;
-        console.error("Fetch error:", error);
-      })
-      .finally(() => {
-        loadingDiv.style.display = 'none';
-        rankingTable.style.display = 'block';
-        document.getElementById('searchContainer').style.display = 'block'; // 👈 Show search
       });
+      
+      // Table sorting
+      document.querySelectorAll('th[data-sort]').forEach(th => {
+        th.addEventListener('click', () => sortTable(th.dataset.sort));
+      });
+      
+      // Buttons
+      elements.refreshBtn.addEventListener('click', refreshData);
+      elements.exportBtn.addEventListener('click', () => new bootstrap.Modal(document.getElementById('exportModal')).show());
+      
+      // Scroll to top functionality
+      window.addEventListener('scroll', toggleScrollButton);
+      
+      // Search input visual feedback
+      elements.searchInput.addEventListener('input', function() {
+        elements.clearSearch.style.display = this.value ? 'block' : 'none';
+      });
+    }
 
-      const searchInput = document.getElementById("searchInput");
+    async function loadData() {
+      try {
+        showLoading(true);
+        const response = await fetch('https://script.google.com/macros/s/AKfycbyCw9LiQIEjPtDucQdwxMFgVAo4AevQfEnyOGJad2uaiCwyMqh_-wQl0xtRsuHBHTF7/exec');
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
+        allData = data.data || [];
+        filteredData = [...allData];
+        
+        updateUI(data);
+        renderTable();
+        createCharts();
+        
+        document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()}`;
+        
+      } catch (error) {
+        console.error('Error loading data:', error);
+        showError('Failed to load data. Please try again.');
+      } finally {
+        showLoading(false);
+      }
+    }
 
-      function normalize(str) {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    function showLoading(show) {
+      elements.loading.style.display = show ? 'block' : 'none';
+      elements.mainContent.style.display = show ? 'none' : 'block';
+    }
+
+    function showError(message) {
+      elements.rankingBody.innerHTML = `
+        <tr>
+          <td colspan="11" class="text-center text-danger p-4">
+            <div class="d-flex flex-column align-items-center">
+              <div class="mb-2">❌</div>
+              <div>${message}</div>
+              <button class="btn btn-outline-primary btn-sm mt-2" onclick="loadData()">Try Again</button>
+            </div>
+          </td>
+        </tr>`;
+    }
+
+    function updateUI(data) {
+      // Update cycle range
+      document.getElementById('cycleRange').textContent = 
+        `Current Cycle: ${data.cycleStart} – ${data.cycleEnd}`;
+      
+      // Update stats
+      const stats = calculateStats(allData);
+      document.getElementById('totalCoordinators').textContent = stats.total;
+      document.getElementById('avgPerformance').textContent = `${stats.avgPerformance}%`;
+      document.getElementById('totalSessions').textContent = stats.totalSessions;
+      document.getElementById('topPerformers').textContent = stats.outstanding;
+    }
+
+    function calculateStats(data) {
+      if (!data.length) return { total: 0, avgPerformance: 0, totalSessions: 0, outstanding: 0 };
+      
+      const total = data.length;
+      const avgPerformance = Math.round(data.reduce((sum, item) => sum + item.percentage, 0) / total);
+      const totalSessions = data.reduce((sum, item) => sum + item.totalSessions, 0);
+      const outstanding = data.filter(item => item.percentage >= 95).length;
+      
+      return { total, avgPerformance, totalSessions, outstanding };
+    }
+
+    function renderTable() {
+      const tbody = elements.rankingBody;
+      if (!filteredData.length) {
+        tbody.innerHTML = '<tr><td colspan="11" class="text-center p-4">No coordinators match your filters</td></tr>';
+        return;
       }
 
-      function debounce(func, delay) {
-        let timeout;
-        return function () {
-          clearTimeout(timeout);
-          timeout = setTimeout(func, delay);
-        };
+      let html = '';
+      filteredData.forEach((coordinator, index) => {
+        const rank = getRankDisplay(index);
+        const rowClass = getRankClass(index);
+        
+        html += `
+          <tr class="${rowClass} expandable-row" data-coordinator-id="${index}">
+            <td class="fw-bold">${rank}</td>
+            <td class="fw-medium">${coordinator.name}</td>
+            <td><span class="badge bg-secondary">${coordinator.totalSessions}</span></td>
+            <td>${coordinator.attendanceScore}</td>
+            <td>${coordinator.recordsScore}</td>
+            <td>${coordinator.materialsScore}</td>
+            <td class="text-danger fw-bold">-${coordinator.penalties.toFixed(1)}</td>
+            <td class="fw-bold">${coordinator.totalPoints.toFixed(1)}</td>
+            <td><strong>${coordinator.percentage}%</strong></td>
+            <td><span class="performance-badge performance-${coordinator.performance.toLowerCase().replace(' ', '-')}">${coordinator.performance}</span></td>
+            <td><button class="btn btn-outline-primary btn-sm" onclick="toggleDetails(${index})">📊</button></td>
+          </tr>
+          <tr id="details-${index}" class="details-row" style="display: none;">
+            <td colspan="11">
+              <div class="p-3">
+                <div class="row">
+                  <div class="col-md-3">
+                    <strong>Efficiency Metrics:</strong><br>
+                    <small>Sessions per point: ${(coordinator.totalSessions / coordinator.totalPoints).toFixed(2)}</small><br>
+                    <small>Penalty rate: ${(coordinator.penalties / coordinator.totalSessions * 100).toFixed(1)}%</small>
+                  </div>
+                  <div class="col-md-3">
+                    <strong>Score Breakdown:</strong><br>
+                    <small>Attendance: ${coordinator.attendanceScore}/${coordinator.totalSessions}</small><br>
+                    <small>Records: ${coordinator.recordsScore}/${coordinator.totalSessions}</small><br>
+                    <small>Materials: ${coordinator.materialsScore}/${coordinator.totalSessions}</small>
+                  </div>
+                  <div class="col-md-6">
+                    <canvas id="breakdown-chart-${index}" width="200" height="100"></canvas>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>`;
+      });
+      
+      tbody.innerHTML = html;
+    }
+
+    function getRankDisplay(index) {
+      if (index === 0) return '🥇';
+      if (index === 1) return '🥈';
+      if (index === 2) return '🥉';
+      return index + 1;
+    }
+
+    function getRankClass(index) {
+      if (index === 0) return 'gold-row';
+      if (index === 1) return 'silver-row';
+      if (index === 2) return 'bronze-row';
+      return '';
+    }
+
+    function toggleDetails(index) {
+      const detailsRow = document.getElementById(`details-${index}`);
+      if (detailsRow.style.display === 'none') {
+        detailsRow.style.display = 'table-row';
+        createBreakdownChart(index);
+      } else {
+        detailsRow.style.display = 'none';
       }
+    }
 
-      function highlightMatch(text, query) {
-        const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escape regex
-        const regex = new RegExp(`(${escaped})`, 'gi');
-        return text.replace(regex, '<span class="highlight">$1</span>');
-      }
-
-      function filterTable() {
-        const query = normalize(searchInput.value.trim());
-        const words = query.split(/\s+/);
-        const rows = document.querySelectorAll("#rankingBody tr");
-
-        rows.forEach(row => {
-          const cell = row.querySelector("td:nth-child(2)");
-          const name = normalize(cell.textContent);
-          const isMatch = words.every(word => name.includes(word));
-
-          if (isMatch) {
-            // Restore original text and highlight
-            const rawName = cell.textContent;
-            const highlighted = words.reduce(
-              (acc, word) => highlightMatch(acc, word),
-              rawName
-            );
-            cell.innerHTML = highlighted;
-            row.style.display = "";
-          } else {
-            cell.innerHTML = cell.textContent; // remove previous highlight
-            row.style.display = "none";
+    function createBreakdownChart(index) {
+      const coordinator = filteredData[index];
+      const ctx = document.getElementById(`breakdown-chart-${index}`).getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Attendance', 'Records', 'Materials', 'Penalties'],
+          datasets: [{
+            data: [coordinator.attendanceScore, coordinator.recordsScore, coordinator.materialsScore, coordinator.penalties],
+            backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#dc3545']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { font: { size: 10 } }
+            }
           }
-        });
-      }
-
-      searchInput.addEventListener("input", debounce(filterTable, 200));
-
-      window.onscroll = function () {
-        const btn = document.getElementById("goUpBtn");
-        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-          btn.style.display = "block";
-        } else {
-          btn.style.display = "none";
         }
+      });
+    }
+
+    function createCharts() {
+      createPerformanceChart();
+      createScoresChart();
+    }
+
+    function createPerformanceChart() {
+      const performanceCounts = {
+        'Outstanding': allData.filter(d => d.percentage >= 95).length,
+        'Excellent': allData.filter(d => d.percentage >= 90 && d.percentage < 95).length,
+        'Good': allData.filter(d => d.percentage >= 75 && d.percentage < 90).length,
+        'Needs Improvement': allData.filter(d => d.percentage >= 60 && d.percentage < 75).length,
+        'Weak': allData.filter(d => d.percentage < 60).length
       };
 
-      // Smooth scroll to top
-      function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(performanceCounts),
+          datasets: [{
+            data: Object.values(performanceCounts),
+            backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#fd7e14', '#dc3545']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
     }
-    
 
+    function createScoresChart() {
+      const avgScores = {
+        attendance: allData.reduce((sum, d) => sum + d.attendanceScore, 0) / allData.length,
+        records: allData.reduce((sum, d) => sum + d.recordsScore, 0) / allData.length,
+        materials: allData.reduce((sum, d) => sum + d.materialsScore, 0) / allData.length,
+        penalties: allData.reduce((sum, d) => sum + d.penalties, 0) / allData.length
+      };
+
+      const ctx = document.getElementById('scoresChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Attendance', 'Records', 'Materials', 'Penalties'],
+          datasets: [{
+            label: 'Average Score',
+            data: [avgScores.attendance, avgScores.records, avgScores.materials, avgScores.penalties],
+            backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#dc3545']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function applyFilters() {
+      const searchTerm = elements.searchInput.value.toLowerCase().trim();
+      const performanceFilter = elements.performanceFilter.value;
+      const minPercentage = parseInt(elements.percentageRange.value);
+
+      filteredData = allData.filter(coordinator => {
+        // Search filter
+        if (searchTerm && !coordinator.name.toLowerCase().includes(searchTerm)) {
+          return false;
+        }
+        
+        // Performance filter
+        if (performanceFilter && coordinator.performance !== performanceFilter) {
+          return false;
+        }
+        
+        // Percentage filter
+        if (coordinator.percentage < minPercentage) {
+          return false;
+        }
+        
+        return true;
+      });
+
+      renderTable();
+    }
+
+    function applyQuickFilter(filter) {
+      switch (filter) {
+        case 'all':
+          filteredData = [...allData];
+          break;
+        case 'top3':
+          filteredData = allData.slice(0, 3);
+          break;
+        case 'high-sessions':
+          filteredData = allData.filter(d => d.totalSessions >= 10);
+          break;
+        case 'needs-attention':
+          filteredData = allData.filter(d => d.percentage < 75);
+          break;
+      }
+      renderTable();
+    }
+
+    function sortTable(field) {
+      const ascending = currentSort.field === field ? !currentSort.ascending : false;
+      currentSort = { field, ascending };
+
+      filteredData.sort((a, b) => {
+        let valA = a[field];
+        let valB = b[field];
+        
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+        }
+        
+        if (ascending) {
+          return valA > valB ? 1 : -1;
+        } else {
+          return valA < valB ? 1 : -1;
+        }
+      });
+
+      renderTable();
+      
+      // Update sort indicators
+      document.querySelectorAll('th[data-sort] small').forEach(indicator => {
+        indicator.textContent = '▼';
+      });
+      document.querySelector(`th[data-sort="${field}"] small`).textContent = ascending ? '▲' : '▼';
+    }
+
+    function updateRangeValue() {
+      const value = elements.percentageRange.value;
+      elements.rangeValue.textContent = `${value}%+`;
+    }
+
+    function clearSearch() {
+      elements.searchInput.value = '';
+      elements.clearSearch.style.display = 'none';
+      applyFilters();
+    }
+
+    function refreshData() {
+      elements.refreshBtn.innerHTML = '🔄 <span class="spinner-border spinner-border-sm ms-1"></span>';
+      elements.refreshBtn.disabled = true;
+      
+      loadData().finally(() => {
+        elements.refreshBtn.innerHTML = '🔄 Refresh';
+        elements.refreshBtn.disabled = false;
+      });
+    }
+
+    function exportData(format) {
+      const exportData = filteredData.map((coordinator, index) => ({
+        rank: index + 1,
+        name: coordinator.name,
+        totalSessions: coordinator.totalSessions,
+        attendanceScore: coordinator.attendanceScore,
+        recordsScore: coordinator.recordsScore,
+        materialsScore: coordinator.materialsScore,
+        penalties: coordinator.penalties,
+        totalPoints: coordinator.totalPoints,
+        percentage: coordinator.percentage,
+        performance: coordinator.performance
+      }));
+
+      if (format === 'csv') {
+        const csv = convertToCSV(exportData);
+        downloadFile(csv, 'coordinator-rankings.csv', 'text/csv');
+      } else if (format === 'json') {
+        const json = JSON.stringify(exportData, null, 2);
+        downloadFile(json, 'coordinator-rankings.json', 'application/json');
+      }
+      
+      bootstrap.Modal.getInstance(document.getElementById('exportModal')).hide();
+    }
+
+    function convertToCSV(data) {
+      if (!data.length) return '';
+      
+      const headers = Object.keys(data[0]).join(',');
+      const rows = data.map(row => Object.values(row).join(','));
+      return [headers, ...rows].join('\n');
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function toggleScrollButton() {
+      const btn = document.getElementById('goUpBtn');
+      if (window.pageYOffset > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Highlight search matches
+    function highlightMatches(text, searchTerm) {
+      if (!searchTerm) return text;
+      const regex = new RegExp(`(${searchTerm})`, 'gi');
+      return text.replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    // Initialize range value display
+    updateRangeValue();
+    
+    // Set initial active filter
+    document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
   </script>
 
+  <style media="print">
+    .btn, .filter-card, #goUpBtn { display: none !important; }
+    .table-container { box-shadow: none !important; }
+    body { background: white !important; }
+    .stats-card { break-inside: avoid; }
+    .chart-container { break-inside: avoid; }
+  </style>
 </body>
 </html>
