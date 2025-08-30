@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coordinator Dashboard</title>
+  <link rel="icon" type="image/png" href="img/Logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { background-color: #f4f6f8; }
+    header {
+      background-color: #003df4e0;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .logo {
+      max-height: 50px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .gold-row > td {
+      background-color: #ffd700 !important;
+      color: black !important;
+      font-weight: bold;
+    }
+
+    .silver-row > td {
+      background-color: #c0c0c0 !important;
+      color: black !important;
+      font-weight: bold;
+    }
+
+    .bronze-row > td {
+      background-color: #cd7f32 !important;
+      color: white !important;
+      font-weight: bold;
+    }
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+    }
+    #goUpBtn {
+      position: fixed;
+      bottom: 40px;
+      right: 30px;
+      z-index: 100;
+      background-color: #003df4e0;
+      color: white;
+      border: none;
+      outline: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      display: none;
+      transition: all 0.3s ease;
+    }
+
+    #goUpBtn:hover {
+      background-color: #0028a0;
+      transform: translateY(-3px);
+    }
+    .btn-dashboard {
+      background-color: white;
+      color: #003df4e0;
+      border: 2px solid #003df4e0;
+      font-weight: 500;
+      padding: 6px 12px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-dashboard:hover {
+      background-color: #003df4e0;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header class="d-flex justify-content-between align-items-center">
+  <div>
+    <img src="img/white.png" alt="Logo" class="logo">
+    <span class="fs-4 fw-bold">Coordinator Dashboard</span>
+  </div>
+  <a href="tutorial.html" class="btn btn-dashboard me-2">Tutorial</a>
+</header>
+
+
+  <div class="container mt-4">
+    <div id="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2">Loading data, please wait...</p>
+    </div>
+    <p class="text-center text-muted mb-3" id="cycleRange"></p>
+    <!-- Hidden by default -->
+    <div class="mb-3 text-end" id="searchContainer" style="display: none;">
+      <div class="position-relative d-inline-block w-25">
+        <input
+          type="text"
+          id="searchInput"
+          class="form-control pe-5"
+          placeholder="Search by name..."
+        />
+        <button
+          type="button"
+          id="clearSearch"
+          class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1"
+          style="border: none; background: transparent; font-size: 18px; display: none;"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+
+
+
+    <div class="table-responsive" style="display: none;" id="rankingTable">
+      <table class="table table-bordered">
+        <thead class="table-primary">
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Total Sessions</th>
+            <th>Attendance Score</th>
+            <th>Record Score</th>
+            <th>Material Score</th>
+            <th>Penalties</th>
+            <th>Total Points</th>
+            <th>Percentage</th>
+            <th>Performance</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <button id="goUpBtn" onclick="scrollToTop()" title="Go to top">
+    ↑
+  </button>
+
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("clearSearch");
+
+    searchInput.addEventListener("input", function () {
+      clearBtn.style.display = this.value ? "block" : "none";
+    });
+
+    clearBtn.addEventListener("click", function () {
+      searchInput.value = "";
+      clearBtn.style.display = "none";
+      filterTable(); // reset table when cleared
+    });
+
+    const isUnderMaintenance = false;
+    const tbody = document.getElementById('rankingBody');
+    const loadingDiv = document.getElementById('loading');
+    const rankingTable = document.getElementById('rankingTable');
+    if (isUnderMaintenance) {
+      document.body.innerHTML = `
+        <div class="d-flex justify-content-center align-items-center vh-100 vw-100 text-center bg-light">
+          <div>
+            <img src="img/Logo.png" alt="Logo" style="max-width: 120px;" class="mb-3">
+            <h1 class="text-primary fw-bold">🚧 Site Under Maintenance</h1>
+            <p class="fs-5 text-muted">We're currently updating the dashboard.<br>Please check back soon.</p>
+          </div>
+        </div>`;
+        
+    } else {
+      fetch('https://script.google.com/macros/s/AKfycbyCw9LiQIEjPtDucQdwxMFgVAo4AevQfEnyOGJad2uaiCwyMqh_-wQl0xtRsuHBHTF7/exec')
+      .then(res => res.json())
+      .then(response => {
+        const { data, cycleStart, cycleEnd } = response;
+
+        // Display date range
+        document.getElementById('cycleRange').innerText = `Current Cycle: ${cycleStart} – ${cycleEnd}`;
+
+        // Sort and display table
+        data.sort((a, b) => {
+          if (b.percentage !== a.percentage) {
+            return b.percentage - a.percentage; // Primary sort by percentage
+          }
+          return b.totalSessions - a.totalSessions; // Secondary sort by total sessions
+        });
+        let rows = "";
+
+        data.forEach((c, i) => {
+          let rankDisplay;
+          let rowClass = "";
+          if (i === 0) {
+            rankDisplay = "🥇";
+            rowClass = "gold-row";
+          } else if (i === 1) {
+            rankDisplay = "🥈";
+            rowClass = "silver-row";
+          } else if (i === 2) {
+            rankDisplay = "🥉";
+            rowClass = "bronze-row";
+          } else {
+            rankDisplay = i + 1;
+            rowClass = ""; 
+          }
+
+          rows += `
+            <tr class="${rowClass}">
+              <td>${rankDisplay}</td>
+              <td>${c.name}</td>
+              <td>${c.totalSessions}</td>
+              <td>${c.attendanceScore}</td>
+              <td>${c.recordsScore}</td>
+              <td>${c.materialsScore}</td>
+              <td class="text-danger">-${c.penalties.toFixed(1)}</td>
+              <td>${c.totalPoints.toFixed(1)}</td>
+              <td>${c.percentage}%</td>
+              <td>${c.performance}</td>
+            </tr>`;
+        });
+
+        tbody.innerHTML = rows;
+
+      })
+      .catch(error => {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-danger text-center">Error loading data</td></tr>`;
+        console.error("Fetch error:", error);
+      })
+      .finally(() => {
+        loadingDiv.style.display = 'none';
+        rankingTable.style.display = 'block';
+        document.getElementById('searchContainer').style.display = 'block'; // 👈 Show search
+      });
+
+      const searchInput = document.getElementById("searchInput");
+
+      function normalize(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      }
+
+      function debounce(func, delay) {
+        let timeout;
+        return function () {
+          clearTimeout(timeout);
+          timeout = setTimeout(func, delay);
+        };
+      }
+
+      function highlightMatch(text, query) {
+        const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escape regex
+        const regex = new RegExp(`(${escaped})`, 'gi');
+        return text.replace(regex, '<span class="highlight">$1</span>');
+      }
+
+      function filterTable() {
+        const query = normalize(searchInput.value.trim());
+        const words = query.split(/\s+/);
+        const rows = document.querySelectorAll("#rankingBody tr");
+
+        rows.forEach(row => {
+          const cell = row.querySelector("td:nth-child(2)");
+          const name = normalize(cell.textContent);
+          const isMatch = words.every(word => name.includes(word));
+
+          if (isMatch) {
+            // Restore original text and highlight
+            const rawName = cell.textContent;
+            const highlighted = words.reduce(
+              (acc, word) => highlightMatch(acc, word),
+              rawName
+            );
+            cell.innerHTML = highlighted;
+            row.style.display = "";
+          } else {
+            cell.innerHTML = cell.textContent; // remove previous highlight
+            row.style.display = "none";
+          }
+        });
+      }
+
+      searchInput.addEventListener("input", debounce(filterTable, 200));
+
+      window.onscroll = function () {
+        const btn = document.getElementById("goUpBtn");
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+          btn.style.display = "block";
+        } else {
+          btn.style.display = "none";
+        }
+      };
+
+      // Smooth scroll to top
+      function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+
+    }
+    
+
+  </script>
+
+</body>
+</html>
