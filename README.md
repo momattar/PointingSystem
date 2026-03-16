@@ -1,16 +1,22 @@
 # Coordinator Performance Dashboard
 
-A real-time performance tracking dashboard built for **eYouth** to monitor and rank project coordinators based on cycle-based KPIs.
+A real-time performance tracking dashboard built for project to monitor and rank project coordinators based on cycle-based KPIs.
 
 > **Status:** Project concluded. Kept live as documentation of the pointing system used during the DEPI Round 3 program.
 
 ---
 
 ## Overview
+<div align="center">
 
+ -> [**LIVE**](https://coordinators-dashboard.netlify.app/) <-
+ 
+ </div>
 During the DEPI Round 3 program, coordinators were responsible for managing sessions across multiple groups. This dashboard aggregated their performance data from Google Sheets via a Google Apps Script API and displayed a live leaderboard with scoring breakdowns.
 
 **Built with:** HTML · CSS · JavaScript · Bootstrap 5 · Chart.js · Google Apps Script
+
+
 
 ---
 
