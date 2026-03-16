@@ -1,307 +1,786 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tutorial – Coordinator Ranking System</title>
-  <link rel="icon" type="image/png" href="img/Logo.png">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <style>
-    html {
-      scroll-behavior: smooth;
-    }
-    body { background-color: #f9f9fb; }
-    header {
-      background-color: #003df4e0;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    .logo {
-      max-height: 50px;
-      vertical-align: middle;
-      margin-right: 10px;
-    }
-    h2 { margin-top: 4rem; }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial – Coordinator Ranking System</title>
+    <link rel="icon" type="image/png" href="img/Logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --blue: #003df4;
+            --blue-dk: #0028a0;
+            --blue-lt: #e8eeff;
+            --ink: #0d1117;
+            --ink2: #3d4554;
+            --muted: #8c94a6;
+            --border: #e4e8f0;
+            --bg: #f5f7fb;
+            --white: #ffffff;
+            --green: #16a34a;
+            --yellow: #d97706;
+            --red: #dc2626;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+        }
 
-    .btn-dashboard {
-      background-color: white;
-      color: #003df4e0;
-      border: 2px solid #003df4e0;
-      font-weight: 500;
-      padding: 6px 12px;
-      transition: all 0.2s ease-in-out;
-    }
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    .btn-dashboard:hover {
-      background-color: #003df4e0;
-      color: white;
-    }
-    .toc-container {
-      background-color: #eef2ff;
-      border-left: 5px solid #003df4e0;
-      padding: 1rem 1.5rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    .toc-title {
-      font-weight: 600;
-      color: #003df4e0;
-      margin-bottom: 0.75rem;
-    }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 14px;
+            line-height: 1.7;
+        }
 
-    .toc-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem 1rem;
-    }
+        /* ── HEADER ──────────────────────────────────────── */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    .toc-link {
-      display: inline-block;
-      padding: 6px 12px;
-      background-color: white;
-      color: #003df4e0;
-      border: 1px solid #003df4e0;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: background-color 0.2s, color 0.2s;
-    }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .toc-link:hover {
-      background-color: #003df4e0;
-      color: white;
-    }
+        .header-logo {
+            height: 32px;
+        }
 
-    @media (max-width: 576px) {
-      .toc-link {
-        flex: 1 1 100%;
-        text-align: center;
-      }
-    }
-  </style>
+        .header-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -.3px;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        .btn-header {
+            height: 34px;
+            padding: 0 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--ink2);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all .15s ease;
+            text-decoration: none;
+        }
+
+            .btn-header:hover {
+                background: var(--bg);
+                border-color: #c8cfe0;
+                color: var(--ink);
+            }
+
+            .btn-header.primary {
+                background: var(--blue);
+                border-color: var(--blue);
+                color: white;
+            }
+
+                .btn-header.primary:hover {
+                    background: var(--blue-dk);
+                    border-color: var(--blue-dk);
+                }
+
+        /* ── LAYOUT ──────────────────────────────────────── */
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* ── HERO ────────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            padding: 48px 24px 40px;
+            margin-bottom: 32px;
+        }
+
+        .eyouth-logo {
+            height: 52px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -.5px;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .hero-sub {
+            font-size: 14px;
+            color: var(--muted);
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        /* ── TOC ─────────────────────────────────────────── */
+        .toc-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 32px;
+        }
+
+        .toc-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .toc-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .toc-link {
+            height: 32px;
+            padding: 0 14px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--ink2);
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all .15s;
+        }
+
+            .toc-link:hover {
+                border-color: var(--blue);
+                color: var(--blue);
+                background: var(--blue-lt);
+            }
+
+        /* ── TOOLKIT ─────────────────────────────────────── */
+        .toolkit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .toolkit-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--ink2);
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+            .toolkit-btn:hover {
+                border-color: var(--blue);
+                color: var(--blue);
+                background: var(--blue-lt);
+            }
+
+        .toolkit-icon {
+            font-size: 14px;
+        }
+
+        /* ── SECTION ─────────────────────────────────────── */
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+        }
+
+        .section-anchor {
+            display: block;
+            height: 80px;
+            margin-top: -80px;
+            visibility: hidden;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -.3px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+            .section-title.highlighted {
+                color: var(--blue);
+                border-bottom-color: var(--blue-lt);
+            }
+
+        p {
+            color: var(--ink2);
+            margin-bottom: 12px;
+        }
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+
+        strong {
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        /* ── TABLE ───────────────────────────────────────── */
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+            .doc-table thead th {
+                background: var(--ink);
+                color: rgba(255,255,255,.75);
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: .6px;
+                text-transform: uppercase;
+                padding: 10px 14px;
+                text-align: left;
+            }
+
+            .doc-table tbody td {
+                padding: 10px 14px;
+                border-bottom: 1px solid var(--border);
+                color: var(--ink2);
+                vertical-align: middle;
+            }
+
+            .doc-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+            .doc-table tbody tr:hover td {
+                background: #f9fafc;
+            }
+
+        .text-green {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .text-red {
+            color: var(--red);
+            font-weight: 600;
+        }
+
+        .text-muted {
+            color: var(--muted);
+        }
+
+        /* ── CALLOUT ─────────────────────────────────────── */
+        .callout {
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .callout-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .callout-blue {
+            background: var(--blue-lt);
+            border: 1px solid #c7d7fe;
+            color: #1e40af;
+        }
+
+        .callout-yellow {
+            background: #fefce8;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .callout-green {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        /* ── PILLS ───────────────────────────────────────── */
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }
+
+        .pill-excellent {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .pill-good {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .pill-needs {
+            background: #fef9c3;
+            color: #a16207;
+        }
+
+        .pill-weak {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .pill-nodata {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        /* ── TIPS ────────────────────────────────────────── */
+        .tips-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+            .tips-list li {
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
+                font-size: 13px;
+                color: var(--ink2);
+            }
+
+        .tip-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--blue);
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        /* ── FORMULA ─────────────────────────────────────── */
+        .formula-block {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-family: 'DM Mono', monospace;
+            font-size: 13px;
+            color: var(--ink2);
+            margin-top: 12px;
+            line-height: 2;
+        }
+
+            .formula-block .eq {
+                color: var(--blue);
+                font-weight: 500;
+            }
+
+        /* ── SCROLL BTN ──────────────────────────────────── */
+        #goUpBtn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 200;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--ink);
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            transition: all .2s ease;
+        }
+
+            #goUpBtn:hover {
+                background: var(--blue);
+                transform: translateY(-2px);
+            }
+
+            #goUpBtn.show {
+                display: flex;
+            }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 0 16px;
+            }
+
+            .page {
+                padding: 24px 16px 60px;
+            }
+
+            .toolkit-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-divider {
+                display: none;
+            }
+
+            .btn-header span:last-child {
+                display: none;
+            }
+        }
+
+        @media print {
+            header, #goUpBtn, .toc-card {
+                display: none !important;
+            }
+
+            .page {
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .section-card {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header class="d-flex justify-content-between align-items-center">
-    <div>
-      <img src="img/white.png" alt="Logo" class="logo">
-      <span class="fs-4 fw-bold">Coordinator System Tutorial</span>
-    </div>
-    <a href="index.html" class="btn btn-dashboard me-2">← Back to Dashboard</a>
-    <style>
-      #goUpBtn {
-        position: fixed;
-        bottom: 40px;
-        right: 30px;
-        z-index: 100;
-        background-color: #003df4e0;
-        color: white;
-        border: none;
-        outline: none;
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        font-size: 22px;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        display: none;
-        transition: all 0.3s ease;
-      }
 
-      #goUpBtn:hover {
-        background-color: #0028a0;
-        transform: translateY(-3px);
-      }
-      h2.highlighted {
-        background-color: #ffeaa7;
-        border-left: 5px solid #0984e3;
-        padding-left: 10px;
-        transition: background-color 0.3s ease;
-      }
-    </style>
-  </header>
-  
-
-  <div class="container my-4">
-    <p class="lead text-center">Understand how the ranking system works and how to improve your performance</p>
-    <div class="toc-container">
-      <div class="toc-title">📘 Quick Navigation</div>
-      <div class="toc-links">
-        <a href="#cycle" class="toc-link">📅 What is a Cycle?</a>
-        <a href="#measured" class="toc-link">🧮 What’s Measured?</a>
-        <a href="#penalties" class="toc-link">🚨 Extra Penalties</a>
-        <a href="#calculation" class="toc-link">📊 Score Calculation</a>
-        <a href="#performance" class="toc-link">🏅 Performance Levels</a>
-        <a href="#dashboard" class="toc-link">📈 Track Progress</a>
-        <a href="#tips" class="toc-link">💡 Tips for Better Score</a>
-      </div>
-    </div>
-    <!-- Branding / Featured Section -->
-    <div class="my-4 text-center">
-      <img src="img/horizontal.png" alt="eYouth Logo" class="img-fluid" style="max-height: 80px;">
-    </div>
-
-    <!-- Session Toolkit -->
-    <div class="card shadow-sm border-0 mb-5">
-      <div class="card-body">
-        <h5 class="card-title text-primary fw-bold mb-3">🛠️ Session Links Toolkit</h5>
-        <div class="row row-cols-1 row-cols-md-3 g-3">
-          <div class="col">
-            <a href="https://depi3.eyouthlearning.com/" target="_blank" class="btn btn-outline-primary w-100">
-              🔐 LMS
-            </a>
-          </div>
-          <div class="col">
-            <a href="https://drive.google.com/drive/folders/1SYh5_LtBwQvRN8-wNNiAPvn0IVyo89tA" target="_blank" class="btn btn-outline-primary w-100">
-              📁 NonTechnical Material Drive
-            </a>
-          </div>
-          <div class="col">
-            <a href="https://tracking.depi.eyouthlearning.com" target="_blank" class="btn btn-outline-primary w-100">
-              📝 Tracking System
-            </a>
-          </div>
-          <div class="col">
-            <a href="https://docs.google.com/spreadsheets/d/1WS09TYzvnNFu5hu2dFSZ65acAegUeGGF_-c_AgRydHI/edit?gid=0#gid=0" target="_blank" class="btn btn-outline-primary w-100">
-              📊 Group Database
-            </a>
-          </div>
-          <div class="col">
-            <a href="https://docs.google.com/spreadsheets/d/1VABzkHwvRdFv5lzo5HKCT3tLVkT_-n-7O0AnqOqzIc0/edit?gid=1128549826#gid=1128549826" target="_blank" class="btn btn-outline-primary w-100">
-              ⏺ Session Recordings
-            </a>
-          </div>
-          <div class="col">
-            <a href="https://www.zoom.us/" target="_blank" class="btn btn-outline-primary w-100">
-              🌐 Zoom
-            </a>
-          </div>
+    <!-- ── HEADER ──────────────────────────────────────────── -->
+    <header>
+        <div class="header-left">
+            <img src="img/white.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
+            <span class="header-title">Tutorial</span>
+            <div class="header-divider"></div>
+            <span style="font-size:12px;color:var(--muted);font-weight:500;">Coordinator Ranking System</span>
         </div>
-      </div>
-    </div>
+        <a href="index.html" class="btn-header primary">
+            <span>←</span><span>Back to Dashboard</span>
+        </a>
+    </header>
 
-    <h2 id="cycle">📅 What is a "Cycle"?</h2>
-    <p>A <strong>cycle</strong> is a 4-week (28-day) period where your activity is tracked. After each cycle, points reset and a new one begins.</p>
-    <p><strong>Example:</strong> Aug 1 – Aug 28, 2025</p>
+    <!-- ── PAGE ────────────────────────────────────────────── -->
+    <div class="page">
 
-    <h2 id="measured">🧮 What’s Measured?</h2>
-    <p>Your score is based on 3 main tasks per session:</p>
-    <table class="table table-bordered">
-      <thead class="table-light">
-        <tr>
-          <th>Task</th>
-          <th>Done on Time</th>
-          <th>Delayed</th>
-          <th>Not Done</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Attendance</td>
-          <td>+1</td>
-          <td>+1, <span class="text-danger">-0.5 penalty</span></td>
-          <td><span class="text-danger">-1 penalty</span></td>
-        </tr>
-        <tr>
-          <td>Record</td>
-          <td>+1</td>
-          <td>+1, <span class="text-danger">-0.5 penalty</span></td>
-          <td><span class="text-danger">-1 penalty (only if online)</span></td>
-        </tr>
-        <tr>
-          <td>Materials</td>
-          <td>+1</td>
-          <td>+1, <span class="text-danger">-0.5 penalty</span></td>
-          <td><span class="text-danger">-1 penalty</span></td>
-        </tr>
-      </tbody>
-    </table>
+        <!-- hero -->
+        <div class="hero">
+            <img src="img/horizontal.png" alt="eYouth" class="eyouth-logo" onerror="this.style.display='none'">
+            <div class="hero-title">Coordinator Ranking System</div>
+            <div class="hero-sub">Understand how your performance is measured, scored, and ranked each cycle.</div>
+        </div>
 
-    <h2 id="penalties">🚨 Extra Penalties</h2>
-    <ul>
-      <li><strong>Reminder not sent 24hr before session</strong> – <span class="text-danger">-3</span></li>
-      <li><strong>Caused problem, or didn't report problem</strong> – <span class="text-danger">-5</span></li>
-    </ul>
+        <!-- toc -->
+        <div class="toc-card">
+            <div class="toc-label">Quick Navigation</div>
+            <div class="toc-links">
+                <a href="#cycle" class="toc-link">📅 What is a Cycle?</a>
+                <a href="#measured" class="toc-link">🧮 What's Measured?</a>
+                <a href="#penalties" class="toc-link">🚨 Extra Penalties</a>
+                <a href="#calculation" class="toc-link">📊 Score Calculation</a>
+                <a href="#ranking" class="toc-link">🏆 Ranking Rules</a>
+                <a href="#performance" class="toc-link">🏅 Performance Levels</a>
+                <a href="#toolkit" class="toc-link">🛠️ Session Toolkit</a>
+                <a href="#tips" class="toc-link">💡 Tips</a>
+            </div>
+        </div>
 
-    <h2 id="calculation">📊 Final Score Calculation</h2>
-    <ul>
-      <li>Total Points = Attendance + Record + Materials</li>
-      <li>Penalties are deducted</li>
-      <li>Performance % = (Total Points / Max Possible Points) × 100</li>
-    </ul>
+        <!-- cycle -->
+        <div class="section">
+            <span class="section-anchor" id="cycle"></span>
+            <div class="section-card">
+                <div class="section-title">📅 What is a Cycle?</div>
+                <p>A <strong>cycle</strong> is a 4-week (28-day) period during which your activity is tracked and scored. After each cycle ends, all points reset and a new cycle begins.</p>
+                <p><strong>Example:</strong> Aug 1 – Aug 28, 2025</p>
+                <div class="callout callout-blue">
+                    <span class="callout-icon">ℹ️</span>
+                    <span>Your rank on the dashboard reflects your performance within the <strong>current active cycle only</strong>. Previous cycles are not included.</span>
+                </div>
+            </div>
+        </div>
 
-    <h2 id="performance">🏅 Performance Levels</h2>
-    <table class="table table-bordered">
-      <thead class="table-light">
-        <tr>
-          <th>Percentage</th>
-          <th>Performance</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>95%+</td><td class="text-success fw-bold">Excellent</td></tr>
-        <tr><td>75–94%</td><td class="text-primary fw-bold">Good</td></tr>
-        <tr><td>60–74%</td><td class="text-warning fw-bold">Needs Improvement</td></tr>
-        <tr><td>&lt; 60%</td><td class="text-danger fw-bold">Weak</td></tr>
-      </tbody>
-    </table>
+        <!-- measured -->
+        <div class="section">
+            <span class="section-anchor" id="measured"></span>
+            <div class="section-card">
+                <div class="section-title">🧮 What's Measured?</div>
+                <p>Every session you are responsible for has <strong>3 tasks</strong>. Each task is evaluated as On Time, Delayed, or Not Done.</p>
+                <table class="doc-table" style="margin-top:14px;">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>On Time</th>
+                            <th>Delayed</th>
+                            <th>Not Done</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Attendance</strong></td>
+                            <td><span class="text-green">+1 point</span></td>
+                            <td><span class="text-green">+1 point</span>, <span class="text-red">−0.5 penalty</span></td>
+                            <td><span class="text-red">−1 penalty</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Record</strong></td>
+                            <td><span class="text-green">+1 point</span></td>
+                            <td><span class="text-green">+1 point</span>, <span class="text-red">−0.5 penalty</span></td>
+                            <td><span class="text-red">−1 penalty</span> <span class="text-muted">(online only)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Materials</strong></td>
+                            <td><span class="text-green">+1 point</span></td>
+                            <td><span class="text-green">+1 point</span>, <span class="text-red">−0.5 penalty</span></td>
+                            <td><span class="text-red">−1 penalty</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="callout callout-yellow" style="margin-top:14px;">
+                    <span class="callout-icon">⚠️</span>
+                    <span><strong>Delayed is always better than Not Done.</strong> A delayed submission still earns you the point — it only adds a small penalty.</span>
+                </div>
+            </div>
+        </div>
 
-    <h2 id="dashboard">📈 Track Your Progress</h2>
-    <p>Visit the <a href="index.html">Dashboard</a> to see:</p>
-    <ul>
-      <li>Your current rank</li>
-      <li>Cycle date range</li>
-      <li>Breakdown of your scores</li>
-    </ul>
+        <!-- penalties -->
+        <div class="section">
+            <span class="section-anchor" id="penalties"></span>
+            <div class="section-card">
+                <div class="section-title">🚨 Extra Penalties</div>
+                <p>Beyond the per-task scoring, additional penalties apply for specific failures:</p>
+                <table class="doc-table" style="margin-top:14px;">
+                    <thead>
+                        <tr><th>Violation</th><th>Penalty</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Reminder not sent at least 24 hours before the session</td>
+                            <td><span class="text-red">−3 points</span></td>
+                        </tr>
+                        <tr>
+                            <td>Caused a problem, or failed to report a problem</td>
+                            <td><span class="text-red">−5 points</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <h2 id="tips">💡 Tips for a Better Score</h2>
-    <ul>
-      <li>Mark attendance during or right after the session</li>
-      <li>Upload recordings and materials on the same day</li>
-      <li>Communicate early if delayed</li>
-      <li>Avoid late reminders or mistakes</li>
-    </ul>
-  </div>
-  <button id="goUpBtn" onclick="scrollToTop()" title="Go to top">
-    ↑
-  </button>
-  <script>
-    // Show button when user scrolls down
-      window.onscroll = function () {
-        const btn = document.getElementById("goUpBtn");
-        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-          btn.style.display = "block";
-        } else {
-          btn.style.display = "none";
-        }
-      };
+        <!-- calculation -->
+        <div class="section">
+            <span class="section-anchor" id="calculation"></span>
+            <div class="section-card">
+                <div class="section-title">📊 Score Calculation</div>
+                <div class="formula-block">
+                    <div><span class="eq">Raw Points</span>  = Attendance + Records + Materials</div>
+                    <div><span class="eq">Total Points</span> = Raw Points − All Penalties</div>
+                    <div><span class="eq">Max Points</span>   = Total Sessions × 3</div>
+                    <div><span class="eq">Score %</span>      = (Total Points ÷ Max Points) × 100</div>
+                </div>
+                <div class="callout callout-blue" style="margin-top:14px;">
+                    <span class="callout-icon">💡</span>
+                    <div>
+                        <strong>Example:</strong> 10 sessions, all on time, no penalties<br>
+                        Raw = 30 &nbsp;|&nbsp; Max = 30 &nbsp;|&nbsp; Score = <strong>100%</strong><br><br>
+                        10 sessions, 2 delayed attendance, 1 missed material<br>
+                        Raw = 30 &nbsp;|&nbsp; Penalties = 2 &nbsp;|&nbsp; Score = (28 ÷ 30) × 100 = <strong>93.3%</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      // Smooth scroll to top
-      function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      document.querySelectorAll('.toc-container a[href^="#"]').forEach(link => {
-      link.addEventListener('click', function (e) {
-        const targetId = this.getAttribute('href').substring(1);
-        const target = document.getElementById(targetId);
+        <!-- ranking -->
+        <div class="section">
+            <span class="section-anchor" id="ranking"></span>
+            <div class="section-card">
+                <div class="section-title">🏆 Ranking Rules</div>
+                <ul class="tips-list">
+                    <li><div class="tip-dot"></div><div>Coordinators are ranked by <strong>Score %</strong>, highest to lowest.</div></li>
+                    <li><div class="tip-dot"></div><div>If two coordinators have the same %, the one with <strong>more sessions</strong> ranks higher.</div></li>
+                    <li><div class="tip-dot"></div><div>You must have at least <strong>24 active sessions</strong> to appear in the ranked leaderboard.</div></li>
+                    <li><div class="tip-dot"></div><div>Coordinators below 24 sessions appear at the bottom with a <span class="pill pill-nodata">Not Enough Data</span> badge and are not assigned a rank.</div></li>
+                </ul>
+                <div class="callout callout-yellow" style="margin-top:16px;">
+                    <span class="callout-icon">⚠️</span>
+                    <div><strong>Why 24 sessions?</strong> A coordinator who only worked a few sessions could achieve a perfect score simply because they had no opportunity to make mistakes. The threshold ensures rankings reflect consistent, sustained performance over time.</div>
+                </div>
+            </div>
+        </div>
 
-        if (target) {
-          // Remove highlight from all others
-          document.querySelectorAll('h2.highlighted').forEach(el => {
-            el.classList.remove('highlighted');
-          });
+        <!-- performance -->
+        <div class="section">
+            <span class="section-anchor" id="performance"></span>
+            <div class="section-card">
+                <div class="section-title">🏅 Performance Levels</div>
+                <table class="doc-table" style="margin-top:4px;">
+                    <thead>
+                        <tr><th>Score</th><th>Level</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>95% and above</strong></td>
+                            <td><span class="pill pill-excellent">Excellent</span></td>
+                            <td class="text-muted">Outstanding consistency, minimal or no penalties</td>
+                        </tr>
+                        <tr>
+                            <td><strong>75% – 94%</strong></td>
+                            <td><span class="pill pill-good">Good</span></td>
+                            <td class="text-muted">Strong performance with occasional delays</td>
+                        </tr>
+                        <tr>
+                            <td><strong>60% – 74%</strong></td>
+                            <td><span class="pill pill-needs">Needs Improvement</span></td>
+                            <td class="text-muted">Noticeable gaps — late submissions or missed tasks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Below 60%</strong></td>
+                            <td><span class="pill pill-weak">Weak</span></td>
+                            <td class="text-muted">Significant issues requiring immediate attention</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Under 24 sessions</strong></td>
+                            <td><span class="pill pill-nodata">Not Enough Data</span></td>
+                            <td class="text-muted">Insufficient sessions to be ranked</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-          // Add highlight to the target
-          target.classList.add('highlighted');
+        <!-- toolkit -->
+        <div class="section">
+            <span class="section-anchor" id="toolkit"></span>
+            <div class="section-card">
+                <div class="section-title">🛠️ Session Links Toolkit</div>
+                <div class="toolkit-grid">
+                    <a href="https://depi3.eyouthlearning.com/" target="_blank" class="toolkit-btn">
+                        <span class="toolkit-icon">🔐</span> LMS
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1SYh5_LtBwQvRN8-wNNiAPvn0IVyo89tA" target="_blank" class="toolkit-btn">
+                        <span class="toolkit-icon">📁</span> Material Drive
+                    </a>
+                    <a href="https://tracking.depi.eyouthlearning.com" target="_blank" class="toolkit-btn">
+                        <span class="toolkit-icon">📝</span> Tracking System
+                    </a>
+                    <a href="https://docs.google.com/spreadsheets/d/1WS09TYzvnNFu5hu2dFSZ65acAegUeGGF_-c_AgRydHI/edit?gid=0#gid=0" target="_blank" class="toolkit-btn">
+                        <span class="toolkit-icon">📊</span> Group Database
+                    </a>
+                    <a href="https://docs.google.com/spreadsheets/d/1VABzkHwvRdFv5lzo5HKCT3tLVkT_-n-7O0AnqOqzIc0/edit?gid=1128549826#gid=1128549826" target="_blank" class="toolkit-btn">
+                        <span class="toolkit-icon">⏺</span> Session Recordings
+                    </a>
+                    <a href="https://www.zoom.us/" target="_blank" class="toolkit-btn">
+                        <span class="toolkit-icon">🌐</span> Zoom
+                    </a>
+                </div>
+            </div>
+        </div>
 
-          // Optional: Remove it after 3 seconds
-          setTimeout(() => {
-            target.classList.remove('highlighted');
-          }, 3000);
-        }
-      });
-    });
-  </script>
+        <!-- tips -->
+        <div class="section">
+            <span class="section-anchor" id="tips"></span>
+            <div class="section-card">
+                <div class="section-title">💡 Tips for a Better Score</div>
+                <ul class="tips-list">
+                    <li><div class="tip-dot"></div><div>Mark attendance <strong>during or right after</strong> the session — don't leave it for later.</div></li>
+                    <li><div class="tip-dot"></div><div>Upload recordings and materials <strong>on the same day</strong> as the session.</div></li>
+                    <li><div class="tip-dot"></div><div>Send your reminder <strong>at least 24 hours before</strong> every session — missing this costs 3 points.</div></li>
+                    <li><div class="tip-dot"></div><div>If something goes wrong, <strong>report it immediately</strong>. Silence costs 5 points.</div></li>
+                    <li><div class="tip-dot"></div><div>Delayed is always better than not done — even late submissions earn you the point.</div></li>
+                    <li><div class="tip-dot"></div><div>Aim for 24+ sessions to be eligible for ranking — consistency counts.</div></li>
+                </ul>
+                <div class="callout callout-green" style="margin-top:16px;">
+                    <span class="callout-icon">✅</span>
+                    <span>The best coordinators don't just complete tasks — they complete them <strong>on time, every time</strong>.</span>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end .page -->
+
+    <button id="goUpBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <script>
+        // scroll to top button
+        window.addEventListener('scroll', () => {
+            document.getElementById('goUpBtn').classList.toggle('show', window.scrollY > 300);
+        });
+
+        // highlight section on TOC click
+        document.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', function () {
+                const id = this.getAttribute('href').substring(1);
+                const title = document.querySelector(`#${id} + .section-card .section-title`);
+                if (!title) return;
+                document.querySelectorAll('.section-title').forEach(t => t.classList.remove('highlighted'));
+                title.classList.add('highlighted');
+                setTimeout(() => title.classList.remove('highlighted'), 2500);
+            });
+        });
+    </script>
 </body>
 </html>
